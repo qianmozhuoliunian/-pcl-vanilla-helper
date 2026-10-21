@@ -1,0 +1,25 @@
+.worktrees/
+.superpowers/
+
+.tools/
+.artifacts/
+**/bin/
+**/obj/
+**/TestResults/
+*.user
+
+# Local game data, temporary installs and private diagnostics
+.minecraft/
+.pcl-version-bridge-stage-*/
+*.log
+*.dmp
+launcher_accounts.json
+launcher_profiles.json
+
+# Credentials and signing material must not enter the repository
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12

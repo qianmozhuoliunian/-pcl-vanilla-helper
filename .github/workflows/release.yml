@@ -1,0 +1,82 @@
+name: Publish Windows preview
+
+on:
+  push:
+    tags:
+      - 'v*-preview.*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+      - name: Validate preview version and notes
+        shell: pwsh
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v\d+\.\d+\.\d+-preview\.\d+$') {
+            throw 'Expected a version such as v0.1.0-preview.1.'
+          }
+          if (-not (Test-Path -LiteralPath "docs/releases/$env:RELEASE_TAG.md")) {
+            throw 'Release notes for this tag are missing.'
+          }
+      - name: Test
+        run: dotnet test PclVersionBridge.sln --configuration Release
+      - name: Publish and package
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = $env:RELEASE_TAG.Substring(1)
+          $publishDir = '.artifacts/preview/VanillaReach'
+          dotnet publish src/PclVersionBridge.App/PclVersionBridge.App.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -p:RuntimeFrameworkVersion=10.0.13 "-p:Version=$version" -o $publishDir
+          if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed.' }
+          $required = @(
+            'VanillaReach.exe', 'LICENSE', 'THIRD-PARTY-NOTICES.md', 'PRIVACY.md',
+            'QUICKSTART.txt', 'docs/dependencies.md', 'licenses/CmlLib.Core-LICENSE.txt',
+            'licenses/CmlLib.Core.Commons-LICENSE.txt', 'licenses/LZMA-SDK-LICENSE.txt',
+            'licenses/SharpZipLib-LICENSE.txt', 'licenses/DotNet-Runtime-LICENSE.txt',
+            'licenses/DotNet-Runtime-THIRD-PARTY-NOTICES.txt', 'licenses/WPF-LICENSE.txt',
+            'licenses/WPF-THIRD-PARTY-NOTICES.txt'
+          )
+          foreach ($relative in $required) {
+            if (-not (Test-Path -LiteralPath (Join-Path $publishDir $relative) -PathType Leaf)) {
+              throw "Missing package file: $relative"
+            }
+          }
+          if ((Get-ChildItem -LiteralPath $publishDir -Recurse -File).Count -ne $required.Count) {
+            throw 'Unexpected files in the publish directory.'
+          }
+          Compress-Archive -LiteralPath $publishDir -DestinationPath '.artifacts/VanillaReach-win-x64-preview.zip'
+          git archive --format=zip --prefix=pcl-vanilla-helper/ --output=.artifacts/pcl-vanilla-helper-source.zip HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Source archive failed.' }
+          $archives = @('.artifacts/VanillaReach-win-x64-preview.zip', '.artifacts/pcl-vanilla-helper-source.zip')
+          $lines = foreach ($archive in $archives) {
+            $hash = Get-FileHash -LiteralPath $archive -Algorithm SHA256
+            "$($hash.Hash)  $([System.IO.Path]::GetFileName($archive))"
+          }
+          Set-Content -LiteralPath '.artifacts/SHA256SUMS.txt' -Value $lines -Encoding utf8NoBOM
+      - name: Create prerelease with verified packages
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create $env:RELEASE_TAG '.artifacts/VanillaReach-win-x64-preview.zip' '.artifacts/pcl-vanilla-helper-source.zip' '.artifacts/SHA256SUMS.txt' --verify-tag --prerelease --title "原版直达 $env:RELEASE_TAG · 原版装好，PCL 照用" --notes-file "docs/releases/$env:RELEASE_TAG.md"
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub prerelease creation failed.' }
