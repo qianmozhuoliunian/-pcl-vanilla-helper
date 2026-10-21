@@ -38,8 +38,10 @@
 
 程序包必须包含 `LICENSE`、`THIRD-PARTY-NOTICES.md`、`PRIVACY.md`、快速说明、依赖清单及 `licenses/`。不要单独上传 EXE，也不要附带游戏文件、PCL 程序、私人日志或账号信息。
 
-发布后实际打开 Release 页面，核对附件名称和下载文件的 SHA-256，再将 README 中“当前没有已发布的 GitHub Release”和“当前没有公开安装包下载链接”改为已核验的 Release 链接。
+发布后实际打开 Release 页面，核对附件名称和下载文件的 SHA-256，再将 README 的下载地址指向已核验的版本。已有发布标签应保持不动；下一版使用新的预览编号和对应发布说明。
 
 ## 已准备与尚未完成
 
-本地源码、完整 Windows 预览包及许可声明已准备；检查结果见 [发布检查](release-review.md)。空仓库已由所有者创建。源码上传、GitHub Actions 与 Release 以实际远端结果为准，不能仅依据本文件判断已经完成。
+首版已完成源码上传、GitHub Actions 构建与 Pre-release 发布，并实际下载附件核验了校验值、文件数量和许可文本。检查结果见 [发布检查](release-review.md)，已发布版本见 [v0.1.0-preview.1](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper/releases/tag/v0.1.0-preview.1)。
+
+尚未完成实际进入游戏、普通玩家干净 Windows 环境与多设备体验验证。后续版本仍应重新运行构建并验证实际下载附件，不直接沿用首版的检查结论。

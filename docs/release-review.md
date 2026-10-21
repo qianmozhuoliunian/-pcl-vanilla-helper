@@ -59,3 +59,33 @@ B3B5FFF9AC4A1729FB7A0D535F1AE91E5258F2A1E60AE0287A9F6EFDA716AE65
 PCL 的作者公告不是本项目被认定违法的证据。本次授权与隐私检查也不构成面向任意地区、任意运营方式的法律保证。源码自有部分按 MIT 授权，第三方部分保留原许可；公开工具不随包传播游戏内容，也不提供游戏游玩授权。
 
 当前公开说明采用“技术预览”，准确记录尚未完成的干净 Windows、实际游戏启动和外部玩家体验验证。没有宣称已取得权利方认可，也没有把投诉、条款或未知法律适用写成已经确认的禁令。
+
+## 首次远端发布结果
+
+同日完成公开发布，以上“初次检查时尚未创建”的描述保留为准备过程记录。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| 公开仓库 | [qianmozhuoliunian/-pcl-vanilla-helper](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper)，Public，默认分支 main，GitHub 识别为 MIT |
+| 首次源码提交 | `eadf684fb2ef9d4b0c1f0a2edc6e03956d3bc9d1`；61 个文件、无父提交；作者与提交者均使用该账号的 GitHub noreply 邮箱 |
+| 主分支构建 | [Build and test #1](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper/actions/runs/39618935652) 结论 success |
+| 标签构建与发布 | [Publish Windows preview #1](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper/actions/runs/39619385769) 结论 success；日志明确记录 43 通过、0 失败、0 跳过 |
+| 发布页 | [v0.1.0-preview.1](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper/releases/tag/v0.1.0-preview.1)，非草稿，Pre-release；含程序 ZIP、源码 ZIP、SHA256SUMS.txt 三个附件 |
+| 实际附件下载 | 三个附件已从公开下载地址下载；SHA-256 与 GitHub 返回的 asset digest 一致，两份 ZIP 的值也与随附校验文件一致 |
+| 源码 ZIP | 61 个源码文件；逐文件对比标签 Git blob，除 Windows 换行转换外内容一致；42 个文件的换行转换已使用 `git -c core.autocrlf=true archive` 复现，无旧 `.git` 历史 |
+| 程序 ZIP | 14 个文件，ZIP 完整性检查通过；13 个说明与许可文件逐字节匹配同次发布源码包；未混入游戏目录、PCL 程序、SDK、PDB 或原始日志 |
+| 程序版本元数据 | ProductVersion 为 `0.1.0-preview.1+eadf684fb2ef9d4b0c1f0a2edc6e03956d3bc9d1`，FileVersion 为 `0.1.0.0` |
+
+公开 Windows ZIP 为 61,083,441 字节，SHA-256：
+
+```text
+6FFF83BC010964ED5B389AEE93055F46A000928A4805E291A255CC4AD756CAAD
+```
+
+公开源码 ZIP 为 101,117 字节，SHA-256：
+
+```text
+F11142B65179E1BA98231A0F3B3CEF11BF03E645E22380B65A8CDB2411389A79
+```
+
+GitHub 构建时写入了预览版本号，因此公开 EXE 与前述本地 EXE 哈希不同；公开 EXE 为 140,451,468 字节，SHA-256 为 `E25E32F9CC58D305C6FADA492F020A0762229B11B07D6C51DC560CF97B26A42A`。没有以读取版本信息、附件下载或云端构建通过代替实际游戏启动验证。

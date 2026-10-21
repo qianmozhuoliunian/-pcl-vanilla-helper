@@ -8,7 +8,9 @@
 
 项目仓库：[qianmozhuoliunian/-pcl-vanilla-helper](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper)。本项目为独立社区工具，**不是 PCL 官方项目**，与 PCL、Mojang、Microsoft 均无隶属或认可关系。
 
-> **当前状态：技术预览。** 已在本机完成原版 `26.3` 安装、文件校验和 PCL `2.99.0.0` 识别测试；尚未验证实际进入游戏、干净 Windows 环境和多设备体验。当前没有已发布的 GitHub Release。[查看验证记录](docs/verification/mvp-results.md)
+> **当前状态：技术预览 `v0.1.0-preview.1`。** 已在本机完成原版 `26.3` 安装、文件校验和 PCL `2.99.0.0` 识别测试；GitHub Windows 构建环境中 43 项测试通过。尚未验证实际进入游戏、干净 Windows 环境和多设备体验。[查看验证记录](docs/verification/mvp-results.md)
+
+**[下载 Windows x64 预览版（ZIP，约 61 MB）](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper/releases/download/v0.1.0-preview.1/VanillaReach-win-x64-preview.zip)** · [发布说明与 SHA-256 校验文件](https://github.com/qianmozhuoliunian/-pcl-vanilla-helper/releases/tag/v0.1.0-preview.1)
 
 ## 为什么用它？
 
@@ -32,7 +34,7 @@
 
 安装时请避免其他程序同时修改同一个游戏目录。不要用本工具安装到正在运行的游戏实例中。
 
-当前没有公开安装包下载链接。开发者可按下方命令构建；普通玩家请等项目发布经过核验的预览包，不要从不明附件获取 EXE。
+下载 `VanillaReach-win-x64-preview.zip` 后，**完整解压，再双击 `VanillaReach.exe`**；保留同目录的说明与许可文件。GitHub 页面中的 Source code 是开发者源码，普通玩家无需下载它或安装开发工具。
 
 [首版预览说明](docs/releases/v0.1.0-preview.1.md) · [维护者发布步骤](docs/publishing.md)
 
