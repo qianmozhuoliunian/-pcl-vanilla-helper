@@ -11,6 +11,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 {
     private readonly IVersionCatalog _catalog;
     private readonly IInstallService _installer;
+    private readonly InstallationGate _gate;
     private CancellationTokenSource? _installCancellation;
     private string _directoryPath;
     private bool _directoryConfirmed;
@@ -22,10 +23,12 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private string _searchText = "";
 
     public MainViewModel(IVersionCatalog catalog, IInstallService installer,
-        string? suggestedDirectory = null)
+        string? suggestedDirectory = null, InstallationGate? gate = null)
     {
         _catalog = catalog;
         _installer = installer;
+        _gate = gate ?? new InstallationGate();
+        _gate.PropertyChanged += (_, _) => Notify(nameof(CanInstall));
         _directoryPath = suggestedDirectory ?? "";
     }
 
@@ -72,7 +75,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         private set { _isBusy = value; Notify(); Notify(nameof(CanInstall)); }
     }
     public bool IsInstalling => _installCancellation is not null;
-    public bool CanInstall => DirectoryConfirmed && SelectedVersion is not null && !IsBusy;
+    public bool CanInstall => DirectoryConfirmed && SelectedVersion is not null && !IsBusy && !_gate.IsBusy;
     public string Status
     {
         get => _status;
@@ -123,6 +126,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public async Task InstallAsync()
     {
         if (!CanInstall) throw new InstallException("请先确认游戏目录并选择版本。");
+        using var lease = _gate.Acquire();
         var version = SelectedVersion!;
         Error = "";
         IsBusy = true;

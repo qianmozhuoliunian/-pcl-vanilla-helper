@@ -17,6 +17,10 @@
 
 所有 MIT 组件的完整许可文本均在对应文件中，不以超链接代替随包分发的声明。下载到用户电脑的 Minecraft 文件及其第三方库，继续适用其各自的许可，不因本工具而变为 MIT。
 
+## 独立好友服务（开发预览）
+
+好友服务另使用 ASP.NET Core Identity、EF Core/SQLite 10.0.0（MIT）与 SQLitePCLRaw 2.1.11（Apache-2.0）。完整许可随包位于 `licenses/AspNetCore-LICENSE.txt`、`licenses/EFCore-LICENSE.txt`、`licenses/SQLitePCLRaw-LICENSE.txt`，具体组件见 [依赖清单](docs/dependencies.md)。独立服务的 .NET/ASP.NET Core 运行时及附带 notices 也需一起保留。WPF 好友页的首字占位头像由界面文字组成，不使用 MC 皮肤、PCL 图标或生成的人物图片。
+
 ## 仅用于开发、构建和测试
 
 Microsoft.NET.ILLink.Tasks、Microsoft.NET.Test.Sdk、Microsoft.TestPlatform.*、Microsoft.CodeCoverage、coverlet.collector、Newtonsoft.Json 和 xUnit 组件见[完整依赖清单](docs/dependencies.md)。它们的包缓存、SDK、测试二进制与报告不作为应用发布包的一部分分发。
@@ -24,6 +28,8 @@ Microsoft.NET.ILLink.Tasks、Microsoft.NET.Test.Sdk、Microsoft.TestPlatform.*�
 xUnit 当前测试依赖采用 Apache-2.0；旧版 `xunit.abstractions` 包仅给出许可 URL，已另核对其[上游许可声明](https://github.com/xunit/abstractions.xunit/blob/main/license.txt)，未把缺失 SPDX 字段误记为“无许可”。
 
 ## 资源与品牌
+
+整合包检索中的图标、名称、简介和统计来自 Modrinth 项目公开资料，由原发布者提供；它们不因此成为本项目 MIT 授权的内容。应用安装包不预置这些项目图片，使用时按需读取，保留项目来源入口。没有为此新增图像处理依赖，缩略显示使用 Windows/WPF 解码。
 
 - 当前应用界面由仓库内 XAML 绘制；没有随包分发 PCL 图标、Minecraft 贴图、音乐、字体文件或游戏截图。
 - 界面引用 Windows 已安装的 Segoe UI 字体，不把字体文件打包。

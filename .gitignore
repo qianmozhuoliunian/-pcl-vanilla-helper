@@ -23,3 +23,10 @@ launcher_profiles.json
 *.key
 *.pfx
 *.p12
+
+# Optional friend service local state (never distribute accounts, inbox or live endpoint config)
+.friends-local/
+friends-service.json
+friends.db
+friends.db-shm
+friends.db-wal

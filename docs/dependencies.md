@@ -13,6 +13,19 @@
 
 随 Windows x64 自包含包另附 .NET Runtime 与 Windows Desktop/WPF 10.0.13（MIT，内部第三方组件见原始 notices）。NuGet 的 System.Text.Json 8.0.5 和 System.Threading.Tasks.Dataflow 8.0.1 虽见于 CmlLib 的依赖声明，但在当前 net10.0 还原结果中被框架提供的版本替代，不是额外随包复制的这两个旧包。
 
+## 可选好友服务新增依赖（2026-10-23）
+
+仅独立好友服务使用以下新增运行组件；WPF 客户端使用系统 Windows DPAPI，没有新增加密包。根据服务端 `project.assets.json` 与实际 NuGet 包元数据核对：
+
+| 包/组件 | 版本 | 许可 | 本地许可 |
+| --- | --- | --- | --- |
+| Microsoft.AspNetCore.Identity.EntityFrameworkCore | 10.0.0 | MIT | `licenses/AspNetCore-LICENSE.txt` |
+| Microsoft.EntityFrameworkCore、Abstractions、Relational、Sqlite、Sqlite.Core；Microsoft.Data.Sqlite.Core | 10.0.0 | MIT | `licenses/EFCore-LICENSE.txt` |
+| Microsoft.Extensions.DependencyModel | 10.0.0 | MIT | `licenses/DotNet-Runtime-LICENSE.txt` |
+| SQLitePCLRaw.bundle_e_sqlite3、core、lib.e_sqlite3、provider.e_sqlite3 | 2.1.11 | Apache-2.0 | `licenses/SQLitePCLRaw-LICENSE.txt` |
+
+EF Core Analyzers 10.0.0 为构建时组件（MIT）。服务端还使用对应 .NET / ASP.NET Core 运行时，发布时需连同上游 Runtime notices 分发。本表不表示已部署公共服务；完整好友配置见 [说明](friends-setup.md)。SQLitePCLRaw 的许可来自上游固定 `v2.1.11`，ASP.NET Core/EF Core 来自 `v10.0.0` 许可文件，不将根项目 MIT 套用到这些依赖。
+
 ## 构建与测试依赖
 
 以下包不作为应用程序的独立运行依赖分发。源码只保留引用，由还原过程获取；未将包二进制或第三方测试源码放入仓库。

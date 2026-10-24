@@ -19,5 +19,9 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Test
         run: dotnet test PclVersionBridge.sln --configuration Release
+      - name: Check WPF project images
+        run: dotnet run --project tests/PclVersionBridge.UiChecks/PclVersionBridge.UiChecks.csproj --configuration Release
+      - name: Check friends service and native client integration
+        run: dotnet run --project tests/VanillaReach.Friends.IntegrationChecks/VanillaReach.Friends.IntegrationChecks.csproj --configuration Release
       - name: Build Windows app
         run: dotnet build src/PclVersionBridge.App/PclVersionBridge.App.csproj --configuration Release --no-restore

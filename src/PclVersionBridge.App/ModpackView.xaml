@@ -1,0 +1,116 @@
+<UserControl x:Class="PclVersionBridge.App.ModpackView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PclVersionBridge.App">
+    <Grid TextOptions.TextFormattingMode="Display">
+        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="0,0,8,8" Style="{StaticResource IdleForm}">
+                <Border Style="{StaticResource SurfaceCard}" Margin="0,0,0,16"><StackPanel>
+                <TextBlock Text="1 · 发现整合包" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="支持 Modrinth 与本地 .mrpack，限 Fabric + Minecraft 正式版。" Style="{StaticResource Hint}" Margin="0,8,0,12"/>
+                <TextBlock Text="整合包关键词" Margin="0,0,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" KeyDown="Query_KeyDown" AutomationProperties.Name="整合包关键词" ToolTip="输入名称并按回车搜索；留空浏览"/>
+                    <Button Grid.Column="1" Content="搜索" Click="Search_Click" Margin="8,0,0,0"/>
+                </Grid>
+                <WrapPanel Margin="0,12,0,12">
+                    <TextBlock Text="MC 版本" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox Width="104" Text="{Binding GameVersion, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="整合包Minecraft版本筛选" ToolTip="例如 1.20.1，留空不限"/>
+                    <TextBlock Text="排序" VerticalAlignment="Center" Margin="16,0,8,0"/>
+                    <ComboBox Width="128" SelectedValue="{Binding Sort,Mode=TwoWay}" SelectedValuePath="Tag" AutomationProperties.Name="整合包排序">
+                        <ComboBoxItem Content="自动排序" Tag="auto"/>
+                        <ComboBoxItem Content="相关度" Tag="relevance"/>
+                        <ComboBoxItem Content="下载量" Tag="downloads"/>
+                        <ComboBoxItem Content="最近更新" Tag="updated"/>
+                    </ComboBox>
+                    <Button Content="导入 .mrpack…" Margin="12,0,0,0" Click="Import_Click"/>
+                </WrapPanel>
+                <TextBlock Text="{Binding SearchSummary}" Style="{StaticResource Hint}" Margin="0,0,0,8"/>
+                <TextBlock Text="输入关键词寻找整合包，或导入本地 .mrpack。名称、图片和简介均以来源提供的资料为准。" Margin="0,4,0,8">
+                    <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Hint}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Projects.Count}" Value="0"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                </TextBlock>
+                <ListBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" MaxHeight="260" MinHeight="112"
+                         MouseDoubleClick="Projects_MouseDoubleClick" KeyDown="Projects_KeyDown"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" AutomationProperties.Name="整合包搜索结果">
+                    <ListBox.Style><Style TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}"><Style.Triggers><DataTrigger Binding="{Binding Projects.Count}" Value="0"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ListBox.Style>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="4,8">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="64"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <local:ProjectImage SourceUri="{Binding IconUri}" ProjectId="{Binding Id}" Width="56" Height="56" VerticalAlignment="Top" AutomationProperties.Name="项目图标"/>
+                                <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                                    <TextBlock FontWeight="SemiBold" FontSize="14" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}"><Hyperlink Click="ProjectTitle_Click"><Run Text="{Binding Title}"/></Hyperlink></TextBlock>
+                                    <TextBlock Text="{Binding Author}" Style="{StaticResource Hint}"/>
+                                    <TextBlock Text="{Binding DescriptionText}" TextWrapping="Wrap" LineHeight="18" MaxHeight="38" Margin="0,3,0,0" ToolTip="{Binding DescriptionText}"/>
+                                    <TextBlock Text="{Binding DownloadsText}" Style="{StaticResource Hint}" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="2" Content="简介" Click="Details_Click" VerticalAlignment="Center" ToolTip="查看 Modrinth 项目原文简介"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <WrapPanel Margin="0,8,0,0">
+                    <Button Content="上一页" Click="Previous_Click" IsEnabled="{Binding CanPreviousPage}"/>
+                    <TextBlock Text="{Binding PageSummary}" VerticalAlignment="Center" Margin="12,0"/>
+                    <Button Content="下一页" Click="Next_Click" IsEnabled="{Binding CanNextPage}"/>
+                </WrapPanel>
+                </StackPanel></Border>
+                <Border Style="{StaticResource SurfaceCard}" Margin="0,0,0,16"><StackPanel>
+                <TextBlock Text="2 · 核对发布版本" Style="{StaticResource SectionTitle}"/>
+                <WrapPanel Margin="0,8,0,8">
+                    <CheckBox Content="包括测试版整合包" IsChecked="{Binding IncludePrerelease}" Margin="0,0,12,0"/>
+                    <Button Content="获取包版本" Click="Versions_Click"/>
+                </WrapPanel>
+                <ComboBox ItemsSource="{Binding Releases}" SelectedItem="{Binding SelectedRelease}" DisplayMemberPath="DisplayName" AutomationProperties.Name="整合包版本"/>
+                <WrapPanel Margin="0,8,0,0">
+                    <Button Content="下载并检查所选包" Click="Preview_Click"/>
+                    <Button Content="发送给好友…" Click="Share_Click" Margin="8,0,0,0" ToolTip="分享此包的指定发布版本，由好友自主检查并安装">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers><DataTrigger Binding="{Binding SelectedRelease}" Value="{x:Null}"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </WrapPanel>
+                </StackPanel></Border>
+                <Border Style="{StaticResource SurfaceCard}"><StackPanel>
+                <TextBlock Text="3 · 创建独立实例" Style="{StaticResource SectionTitle}"/>
+                <Border Background="{StaticResource SurfaceInset}" BorderBrush="{StaticResource Divider}" BorderThickness="1" Padding="16" CornerRadius="10" Margin="0,12,0,0">
+                    <StackPanel>
+                        <TextBlock Text="{Binding PreviewSummary}" TextWrapping="Wrap"/>
+                        <TextBlock Text="独立实例名" Margin="0,12,0,8"/>
+                        <TextBox Text="{Binding InstanceName, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="整合包实例名"/>
+                        <TextBlock Text="已有同名版本会停止安装，不会覆盖。" Style="{StaticResource Hint}" Margin="0,6,0,0"/>
+                        <ItemsControl ItemsSource="{Binding OptionalFiles}" Margin="0,8,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Selected}" Margin="0,3">
+                                        <TextBlock Text="{Binding Path}" TextWrapping="Wrap"/>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+                <TextBlock Text="模组会在启动游戏时执行，请选择可信作者的包。" Style="{StaticResource Hint}" Margin="0,12,0,0"/>
+                </StackPanel></Border>
+            </StackPanel>
+        </ScrollViewer>
+        <Border Grid.Row="1" Style="{StaticResource SurfaceCard}" Padding="20,16" Margin="0,12,0,0">
+            <StackPanel>
+                <TextBlock Text="{Binding Status}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding Status}"/>
+                <ProgressBar Minimum="0" Maximum="100" Value="{Binding ProgressPercent, Mode=OneWay}" Height="6" Margin="0,8,0,0" AutomationProperties.Name="整合包安装进度"/>
+                <ScrollViewer MaxHeight="64" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{StaticResource ErrorText}" FontSize="12" Margin="0,6,0,0"/>
+                </ScrollViewer>
+                <WrapPanel HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button Content="打开目录" Click="Open_Click" Margin="0,0,8,0"/>
+                    <Button Content="取消" Click="Cancel_Click" IsEnabled="{Binding IsBusy}" MinWidth="72" Margin="0,0,8,0"/>
+                    <Button Content="安装整合包" Click="Install_Click" IsEnabled="{Binding CanInstall}" MinWidth="108" Style="{StaticResource PrimaryButton}" ToolTip="请先确认目录，下载并检查或导入整合包"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

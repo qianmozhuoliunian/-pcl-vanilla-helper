@@ -52,7 +52,7 @@ public sealed class CmlInstallSource(HttpClient client) : IInstallSource
             var relative = GamePathValidator.ValidateRelative(Path.GetRelativePath(root, file.Path));
             files.Add(new StagedFile(relative, file.Hash, file.Size));
         }
-        var staged = new StagedVersion(version, root, files);
+        var staged = new StagedVersion(version, root, StagedFileSet.Merge(files));
         OfficialRequirements.Validate(staged);
 
         for (var attempt = 1; ; attempt++)

@@ -39,6 +39,13 @@ jobs:
           }
       - name: Test
         run: dotnet test PclVersionBridge.sln --configuration Release
+      - name: Check WPF UI and friends integration
+        shell: pwsh
+        run: |
+          dotnet run --project tests/PclVersionBridge.UiChecks --configuration Release
+          if ($LASTEXITCODE -ne 0) { throw 'UI checks failed.' }
+          dotnet run --project tests/VanillaReach.Friends.IntegrationChecks --configuration Release
+          if ($LASTEXITCODE -ne 0) { throw 'Friends integration checks failed.' }
       - name: Publish and package
         shell: pwsh
         run: |
@@ -53,7 +60,9 @@ jobs:
             'licenses/CmlLib.Core.Commons-LICENSE.txt', 'licenses/LZMA-SDK-LICENSE.txt',
             'licenses/SharpZipLib-LICENSE.txt', 'licenses/DotNet-Runtime-LICENSE.txt',
             'licenses/DotNet-Runtime-THIRD-PARTY-NOTICES.txt', 'licenses/WPF-LICENSE.txt',
-            'licenses/WPF-THIRD-PARTY-NOTICES.txt'
+            'licenses/WPF-THIRD-PARTY-NOTICES.txt', 'licenses/AspNetCore-LICENSE.txt',
+            'licenses/AspNetCore-Runtime-LICENSE.txt', 'licenses/AspNetCore-Runtime-THIRD-PARTY-NOTICES.txt',
+            'licenses/EFCore-LICENSE.txt', 'licenses/SQLitePCLRaw-LICENSE.txt'
           )
           foreach ($relative in $required) {
             if (-not (Test-Path -LiteralPath (Join-Path $publishDir $relative) -PathType Leaf)) {
